@@ -3,11 +3,13 @@ package main
 import (
 	"context"
 	"fmt"
+	"google.golang.org/protobuf/proto"
 	"os"
 	"sync/atomic"
 	"time"
 
 	"cloud.google.com/go/pubsub"
+	pb "pubsub-sample/github.com/hiramekun/pubsub-sample/proto"
 )
 
 func main() {
@@ -38,7 +40,12 @@ func pullMsgs(projectID, subID string) error {
 
 	var received int32
 	err = sub.Receive(ctx, func(_ context.Context, msg *pubsub.Message) {
-		fmt.Printf("Got message: %q\n", string(msg.Data))
+		var m pb.MyMessage
+		if err := proto.Unmarshal(msg.Data, &m); err != nil {
+			fmt.Printf("proto.Unmarshal: %v\n", err)
+			return
+		}
+		fmt.Printf("Got message: %q\n", m.Content)
 		atomic.AddInt32(&received, 1)
 		msg.Ack()
 	})

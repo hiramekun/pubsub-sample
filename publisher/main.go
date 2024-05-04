@@ -1,11 +1,12 @@
 package main
 
 import (
+	"cloud.google.com/go/pubsub"
 	"context"
 	"fmt"
+	"github.com/golang/protobuf/proto"
 	"os"
-
-	"cloud.google.com/go/pubsub"
+	pb "pubsub-sample/github.com/hiramekun/pubsub-sample/proto"
 )
 
 func main() {
@@ -26,9 +27,12 @@ func publish(projectID, topicID, msg string) error {
 	defer client.Close()
 
 	t := client.Topic(topicID)
-	result := t.Publish(ctx, &pubsub.Message{
-		Data: []byte(msg),
-	})
+	pbMsg := pb.MyMessage{Content: msg}
+	data, err := proto.Marshal(&pbMsg)
+	if err != nil {
+		return fmt.Errorf("proto: Marshal: %w", err)
+	}
+	result := t.Publish(ctx, &pubsub.Message{Data: data})
 	// Block until the result is returned and a server-generated
 	// ID is returned for the published message.
 	id, err := result.Get(ctx)
