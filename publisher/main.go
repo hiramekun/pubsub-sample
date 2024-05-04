@@ -3,13 +3,14 @@ package main
 import (
 	"context"
 	"fmt"
+	"os"
 
 	"cloud.google.com/go/pubsub"
 )
 
 func main() {
-	projectID := "hiramekun-dataflow-sample"
-	topicID := "my-topic"
+	projectID := os.Getenv("GCP_PROJECT_ID")
+	topicID := os.Getenv("PUBSUB_TOPIC_ID")
 	msg := "Hello World"
 	if err := publish(projectID, topicID, msg); err != nil {
 		fmt.Println(err)

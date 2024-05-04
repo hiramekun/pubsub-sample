@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
+	"os"
 	"sync/atomic"
 	"time"
 
@@ -10,8 +11,8 @@ import (
 )
 
 func main() {
-	projectID := "hiramekun-dataflow-sample"
-	subID := "my-sub"
+	projectID := os.Getenv("GCP_PROJECT_ID")
+	subID := os.Getenv("PUBSUB_SUBSCRIPTION_ID")
 	if err := pullMsgs(projectID, subID); err != nil {
 		fmt.Println(err)
 	}
