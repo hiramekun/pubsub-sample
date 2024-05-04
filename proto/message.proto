@@ -6,3 +6,10 @@ option go_package = "github.com/hiramekun/pubsub-sample/proto;proto";
 message MyMessage {
   string content = 1;
 }
+
+message Shakespeare {
+  string word = 1;
+  int64 wordCount = 2;
+  string corpus = 3;
+  int64 corpusDate = 4;
+}
