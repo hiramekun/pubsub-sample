@@ -32,20 +32,17 @@ func pullMsgs(projectID, subID string) error {
 
 	sub := client.Subscription(subID)
 
-	// Receive messages for 10 seconds, which simplifies testing.
-	// Comment this out in production, since `Receive` should
-	// be used as a long running operation.
 	ctx, cancel := context.WithTimeout(ctx, 10*time.Second)
 	defer cancel()
 
 	var received int32
 	err = sub.Receive(ctx, func(_ context.Context, msg *pubsub.Message) {
-		var m pb.MyMessage
+		var m pb.Name
 		if err := proto.Unmarshal(msg.Data, &m); err != nil {
 			fmt.Printf("proto.Unmarshal: %v\n", err)
 			return
 		}
-		fmt.Printf("Got message: %q\n", m.Content)
+		fmt.Printf("Got message: %s, %s, %d\n", m.Name, m.AssignedSexAtBirth, m.Count)
 		atomic.AddInt32(&received, 1)
 		msg.Ack()
 	})
